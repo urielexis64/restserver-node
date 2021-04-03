@@ -4,7 +4,7 @@ const {getUsers, putUsers, postUsers, deleteUsers} = require("../controllers/use
 const router = Router();
 
 router.get("/", getUsers);
-router.put("/", putUsers);
+router.put("/:id", putUsers);
 router.post("/", postUsers);
 router.delete("/", deleteUsers);
 
