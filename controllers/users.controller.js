@@ -3,16 +3,32 @@ const bcriptjs = require("bcryptjs");
 
 const User = require("../models/user");
 
-const getUsers = (req = request, res = response) => {
-	const query = req.query;
+const getUsers = async (req = request, res = response) => {
+	let {limit, from} = req.query;
+	limit = Number(limit);
+	from = Number(from);
 
-	res.status(410).json({msg: "get API controller", query});
+	if (!isValidNumber(limit)) limit = 5;
+	if (!isValidNumber(from)) from = 0;
+	const users = await User.find().skip(from).limit(limit);
+
+	res.json({users, items: users.length});
 };
 
-const putUsers = (req = request, res = response) => {
-	const id = req.params.id;
-	console.log(id);
-	res.json({msg: "put API controller"});
+const putUsers = async (req = request, res = response) => {
+	const {id} = req.params;
+	const {_id, password, google, email, ...rest} = req.body;
+
+	// TODO: validate with database
+	if (password) {
+		// Encrypt password
+		const salt = bcriptjs.genSaltSync();
+		rest.password = bcriptjs.hashSync(password, salt);
+	}
+
+	const user = await User.findByIdAndUpdate(id, rest);
+
+	res.json(user);
 };
 
 const postUsers = async (req = request, res = response) => {
@@ -36,6 +52,12 @@ const postUsers = async (req = request, res = response) => {
 
 const deleteUsers = (req = request, res = response) => {
 	res.json({msg: "delete API controller"});
+};
+
+const isValidNumber = (number, positive = true) => {
+	const negativeCase = positive ? number < 0 : false;
+
+	return !(isNaN(number) || negativeCase);
 };
 
 module.exports = {
