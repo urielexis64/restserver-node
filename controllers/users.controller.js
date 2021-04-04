@@ -24,14 +24,6 @@ const postUsers = async (req = request, res = response) => {
 		role,
 	});
 
-	// Verify if email exists
-	const emailExists = await User.findOne({email});
-	if (emailExists) {
-		return res.status(400).json({
-			message: "Email already exists.",
-		});
-	}
-
 	// Encrypt password
 	const salt = bcriptjs.genSaltSync();
 	user.password = bcriptjs.hashSync(password, salt);
@@ -39,7 +31,7 @@ const postUsers = async (req = request, res = response) => {
 	// Save on database
 	await user.save();
 
-	res.json({msg: "post API controller", user});
+	res.json({user});
 };
 
 const deleteUsers = (req = request, res = response) => {
