@@ -25,6 +25,12 @@ const postUsers = async (req = request, res = response) => {
 	});
 
 	// Verify if email exists
+	const emailExists = await User.findOne({email});
+	if (emailExists) {
+		return res.status(400).json({
+			message: "Email already exists.",
+		});
+	}
 
 	// Encrypt password
 	const salt = bcriptjs.genSaltSync();
