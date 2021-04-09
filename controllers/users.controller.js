@@ -25,7 +25,6 @@ const putUsers = async (req = request, res = response) => {
 	const {id} = req.params;
 	const {_id, password, google, email, ...rest} = req.body;
 
-	// TODO: validate with database
 	if (password) {
 		// Encrypt password
 		const salt = bcriptjs.genSaltSync();
@@ -59,12 +58,9 @@ const postUsers = async (req = request, res = response) => {
 const deleteUsers = async (req = request, res = response) => {
 	const {id} = req.params;
 
-	// Physically delete from database
-	// const user = await User.findByIdAndDelete(id);
-
 	const user = await User.findByIdAndUpdate(id, {status: false});
 
-	res.json({msg: "User deleted succesfully.", user});
+	res.json(user);
 };
 
 module.exports = {
