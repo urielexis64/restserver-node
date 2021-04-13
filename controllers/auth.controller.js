@@ -76,8 +76,6 @@ const googleSignIn = async (req = request, res = response) => {
 		// Generate JWT
 		const token = await generateJWT(user.id);
 
-		// If user does not exists, we have to create it
-
 		res.json({
 			message: "All OK. Google SignIn",
 			token,
