@@ -18,6 +18,7 @@ router.put(
 	],
 	putUsers
 );
+
 router.post(
 	"/",
 	[
@@ -29,6 +30,7 @@ router.post(
 	],
 	postUsers
 );
+
 router.delete(
 	"/:id",
 	[
