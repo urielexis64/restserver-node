@@ -1,7 +1,7 @@
 const {Router, request, response} = require("express");
 const {check} = require("express-validator");
 
-const {categoryExists} = require("../helpers/db_validators");
+const {categoryExists, productExists} = require("../helpers/db_validators");
 
 const {validateJWT} = require("../middlewares/validate_jwt");
 const {validateFields} = require("../middlewares/validate_fields");
@@ -16,15 +16,15 @@ const {isAdminRole} = require("../middlewares");
 
 const router = Router();
 
-// Get all categories - public
-/* router.get("/", getCategories); */
+// Get all products - public
+router.get("/", getProducts);
 
-// Get category by id - public
-/* router.get(
+// Get product by id - public
+router.get(
 	"/:id",
-	[check("id", "Id invalid.").isMongoId(), check("id").custom(categoryExists), validateFields],
-	getCategory
-); */
+	[check("id", "Id invalid.").isMongoId(), check("id").custom(productExists), validateFields],
+	getProduct
+);
 
 // Create product by id - private - any role
 router.post(

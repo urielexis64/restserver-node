@@ -1,29 +1,41 @@
 const {request, response} = require("express");
+const {isValidNumber} = require("../helpers/various_validators");
 const {Product} = require("../models");
 
 // Get products - paged - total - populate
 
-/* const getProducts = async (req = request, res = response) => {
-	const {limit = 5, offset = 0} = req.body;
+const getProducts = async (req = request, res = response) => {
+	let {limit = 5, offset = 0} = req.query;
 	const query = {status: true};
 
-	const [total, categories] = await Promise.all([
-		Category.count(query),
-		Category.find(query).skip(offset).limit(limit).populate("user", "name"),
+	if (isValidNumber(limit)) limit = parseInt(limit);
+	else limit = 5;
+	if (isValidNumber(offset)) offset = parseInt(offset);
+	else offset = 0;
+
+	const [total, products] = await Promise.all([
+		Product.countDocuments(query),
+		Product.find(query)
+			.skip(offset)
+			.limit(limit)
+			.populate("user", "name")
+			.populate("category", "name"),
 	]);
 
-	return res.json({total, categories});
-}; */
+	return res.json({total, products});
+};
 
 // Get product - populate{}
 
-/* const getProduct = async (req = request, res = response) => {
+const getProduct = async (req = request, res = response) => {
 	const {id} = req.params;
 
-	const category = await Category.findById(id).populate("user", "name");
+	const product = await Product.findById(id)
+		.populate("user", "name")
+		.populate("category", "name");
 
-	return res.json(category);
-}; */
+	return res.json(product);
+};
 
 const createProduct = async (req = request, res = response) => {
 	const {status, available, ...rest} = req.body;
@@ -72,8 +84,8 @@ const createProduct = async (req = request, res = response) => {
 }; */
 
 module.exports = {
-	/* getProducts,
-	getProduct, */
+	getProducts,
+	getProduct,
 	createProduct,
 	/* updateProduct,
 	deleteProduct, */
