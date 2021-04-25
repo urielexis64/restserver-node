@@ -10,7 +10,9 @@ const {
 	getCategories,
 	getCategory,
 	updateCategory,
+	deleteCategory,
 } = require("../controllers/categories.controller");
+const {isAdminRole} = require("../middlewares");
 
 const router = Router();
 
@@ -20,11 +22,7 @@ router.get("/", getCategories);
 // Get category by id - public
 router.get(
 	"/:id",
-	[
-		check("id", "Id invalid.").not().isEmpty(),
-		check("id").custom(categoryExists),
-		validateFields,
-	],
+	[check("id", "Id invalid.").isMongoId(), check("id").custom(categoryExists), validateFields],
 	getCategory
 );
 
@@ -39,7 +37,8 @@ router.post(
 router.put(
 	"/:id",
 	[
-		check("id", "ID is required").not().isEmpty(),
+		validateJWT,
+		check("name", "Name is required").not().isEmpty(),
 		check("id").custom(categoryExists),
 		validateFields,
 	],
@@ -47,8 +46,16 @@ router.put(
 );
 
 // Delete category by id - private - admin role
-router.delete("/:id", (req = request, res = response) => {
-	res.json({msg: "delete"});
-});
+router.delete(
+	"/:id",
+	[
+		validateJWT,
+		isAdminRole,
+		check("id", "Invalid ID").isMongoId(),
+		check("id").custom(categoryExists),
+		validateFields,
+	],
+	deleteCategory
+);
 
 module.exports = router;
