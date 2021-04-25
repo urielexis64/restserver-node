@@ -39,29 +39,20 @@ router.post(
 	createProduct
 );
 
-// Update category by name - private - any role
-router.put(
-	"/:id",
-	[
-		validateJWT,
-		check("category", "Category ID invalid").isMongoId(),
-		check("id").custom(productExists),
-		validateFields,
-	],
-	updateProduct
-);
+// Update product by name - private - any role
+router.put("/:id", [validateJWT, check("id").custom(productExists), validateFields], updateProduct);
 
-// Delete category by id - private - admin role
-/* router.delete(
+// Delete product by id - private - admin role
+router.delete(
 	"/:id",
 	[
 		validateJWT,
 		isAdminRole,
 		check("id", "Invalid ID").isMongoId(),
-		check("id").custom(categoryExists),
+		check("id").custom(productExists),
 		validateFields,
 	],
-	deleteCategory
-); */
+	deleteProduct
+);
 
 module.exports = router;

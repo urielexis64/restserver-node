@@ -65,8 +65,12 @@ const updateProduct = async (req = request, res = response) => {
 	const {id} = req.params;
 	const {status, user, _id, ...data} = req.body;
 
-	if (!data) {
+	if (Object.keys(data).length === 0) {
 		return res.status(400).json({message: "Missing body."});
+	}
+
+	if (data.name) {
+		data.name = data.name.toUpperCase();
 	}
 
 	const product = await Product.findByIdAndUpdate(id, data, {new: true});
@@ -75,16 +79,16 @@ const updateProduct = async (req = request, res = response) => {
 };
 
 // Delete product (status: false)
-/* const deleteProduct = async (req = request, res = response) => {
+const deleteProduct = async (req = request, res = response) => {
 	const {id} = req.params;
-	const deletedCategory = await Category.findByIdAndUpdate(id, {status: false}, {new: true});
-	return res.json(deletedCategory);
-}; */
+	const deletedProduct = await Product.findByIdAndUpdate(id, {status: false}, {new: true});
+	return res.json(deletedProduct);
+};
 
 module.exports = {
 	getProducts,
 	getProduct,
 	createProduct,
 	updateProduct,
-	/*deleteProduct, */
+	deleteProduct,
 };
