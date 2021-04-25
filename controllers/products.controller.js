@@ -38,7 +38,7 @@ const getProduct = async (req = request, res = response) => {
 };
 
 const createProduct = async (req = request, res = response) => {
-	const {status, available, ...rest} = req.body;
+	const {status, user, ...rest} = req.body;
 
 	const productDB = await Product.findOne({name: rest.name});
 
@@ -49,6 +49,7 @@ const createProduct = async (req = request, res = response) => {
 	// Generate data to save
 	const data = {
 		...rest,
+		name: rest.name.toUpperCase(),
 		user: req.user._id,
 	};
 	const product = new Product(data);
@@ -60,22 +61,19 @@ const createProduct = async (req = request, res = response) => {
 
 // Update product
 
-/* const updateProduct = async (req = request, res = response) => {
+const updateProduct = async (req = request, res = response) => {
 	const {id} = req.params;
-	let {status, user, ...data} = req.body;
-
-	data.name = data.name.toUpperCase();
-	data.user = req.user._id;
+	const {status, user, _id, ...data} = req.body;
 
 	if (!data) {
 		return res.status(400).json({message: "Missing body."});
 	}
 
-	const category = await Category.findByIdAndUpdate(id, data, {new: true});
+	const product = await Product.findByIdAndUpdate(id, data, {new: true});
 
-	return res.json(category);
+	return res.json(product);
 };
- */
+
 // Delete product (status: false)
 /* const deleteProduct = async (req = request, res = response) => {
 	const {id} = req.params;
@@ -87,6 +85,6 @@ module.exports = {
 	getProducts,
 	getProduct,
 	createProduct,
-	/* updateProduct,
-	deleteProduct, */
+	updateProduct,
+	/*deleteProduct, */
 };

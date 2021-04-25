@@ -32,6 +32,7 @@ router.post(
 	[
 		validateJWT,
 		check("name", "Product name is required.").not().isEmpty(),
+		check("category", "Category ID invalid").isMongoId(),
 		check("category").custom(categoryExists),
 		validateFields,
 	],
@@ -39,16 +40,16 @@ router.post(
 );
 
 // Update category by name - private - any role
-/* router.put(
+router.put(
 	"/:id",
 	[
 		validateJWT,
-		check("name", "Name is required").not().isEmpty(),
-		check("id").custom(categoryExists),
+		check("category", "Category ID invalid").isMongoId(),
+		check("id").custom(productExists),
 		validateFields,
 	],
-	updateCategory
-); */
+	updateProduct
+);
 
 // Delete category by id - private - admin role
 /* router.delete(
