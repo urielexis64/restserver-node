@@ -13,11 +13,64 @@ const searchUsers = async (term = "", res = response) => {
 	}
 
 	const regex = new RegExp(term, "i"); // i = insensitive
-	const [users, total] = await User.find({
+	const query = {
 		$or: [{name: regex}, {email: regex}],
 		status: true,
-	});
-	return res.json({results: users ? users : []});
+	};
+
+	const [users, total] = await Promise.all([User.find(query), User.countDocuments(query)]);
+	return res.json({results: users ? users : [], total});
+};
+
+const searchCategories = async (term = "", res = response) => {
+	const isMongoId = ObjectId.isValid(term);
+
+	if (isMongoId) {
+		const category = await Category.findById(term);
+		return res.json({results: category ? [category] : []});
+	}
+
+	const regex = new RegExp(term, "i"); // i = insensitive
+	const query = {name: regex, status: true};
+
+	const [categories, total] = await Promise.all([
+		Category.find(query).populate("user", "name"),
+		Category.countDocuments(query),
+	]);
+	return res.json({results: categories ? categories : [], total});
+};
+
+const searchProducts = async (term = "", res = response) => {
+	const isMongoId = ObjectId.isValid(term);
+
+	if (isMongoId) {
+		const product = await Product.findById(term);
+		return res.json({results: product ? [product] : []});
+	}
+
+	const regex = new RegExp(term, "i"); // i = insensitive
+	const query = {name: regex, status: true};
+
+	const [products, total] = await Promise.all([
+		Product.find(query).populate("category", "name"),
+		Product.countDocuments(query),
+	]);
+	return res.json({results: products ? products : [], total});
+};
+
+const searchRoles = async (term = "", res = response) => {
+	const isMongoId = ObjectId.isValid(term);
+
+	if (isMongoId) {
+		const role = await Role.findById(term);
+		return res.json({results: role ? [role] : []});
+	}
+
+	const regex = new RegExp(term, "i"); // i = insensitive
+	const query = {name: regex};
+
+	const [roles, total] = await Promise.all([Role.find(query), Role.countDocuments(query)]);
+	return res.json({results: roles ? roles : [], total});
 };
 
 const search = async (req = request, res = response) => {
@@ -29,16 +82,13 @@ const search = async (req = request, res = response) => {
 
 	switch (collection) {
 		case "categories":
-			const categories = await Category.find({name: term});
-			res.json(categories);
+			searchCategories(term, res);
 			break;
 		case "products":
-			const products = await Product.find({name: term});
-			res.json(products);
+			searchProducts(term, res);
 			break;
 		case "roles":
-			const roles = await Role.find({name: term});
-			res.json(roles);
+			searchRoles(term, res);
 			break;
 		case "users":
 			searchUsers(term, res);
