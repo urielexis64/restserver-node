@@ -67,7 +67,7 @@ const searchRoles = async (term = "", res = response) => {
 	}
 
 	const regex = new RegExp(term, "i"); // i = insensitive
-	const query = {name: regex};
+	const query = {role: regex};
 
 	const [roles, total] = await Promise.all([Role.find(query), Role.countDocuments(query)]);
 	return res.json({results: roles ? roles : [], total});
