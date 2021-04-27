@@ -1,4 +1,5 @@
 const path = require("path");
+const {v4: uuidv4} = require("uuid");
 const {request, response} = require("express");
 
 const uploadFile = async (req = request, res = response) => {
@@ -18,7 +19,8 @@ const uploadFile = async (req = request, res = response) => {
 		res.status(400).json({msg: `Invalid file extension. ${extension}. (${validExtensions})`});
 	}
 
-	const uploadPath = path.join(__dirname, "../uploads/", file.name);
+	const tempName = uuidv4() + "." + extension;
+	const uploadPath = path.join(__dirname, "../uploads/", tempName);
 
 	file.mv(uploadPath, (err) => {
 		if (err) {
