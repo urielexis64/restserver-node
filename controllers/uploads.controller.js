@@ -128,13 +128,11 @@ const showImage = async (req = request, res = response) => {
 
 	// Clear previous images
 	try {
-		let imagePath;
-
 		if (model.img) {
-			return res.sendFile(model.img);
+			return res.json({url: model.img});
 		}
 
-		imagePath = path.join(__dirname, "../assets/placeholder.jpg");
+		const imagePath = path.join(__dirname, "../assets/placeholder.jpg");
 
 		res.sendFile(imagePath);
 	} catch (error) {
