@@ -7,9 +7,13 @@ const loadFile = async (req = request, res = response) => {
 		return;
 	}
 
-	const filename = await uploadFile(req.files);
+	try {
+		const filename = await uploadFile(req.files, ["txt", "md"], "text files");
 
-	res.json({filename});
+		res.json({filename});
+	} catch (msg) {
+		res.status(400).json({msg});
+	}
 };
 
 module.exports = {
