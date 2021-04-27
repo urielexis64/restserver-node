@@ -1,5 +1,5 @@
 const path = require("path");
-const {request} = require("express");
+const {request, response} = require("express");
 
 const uploadFile = async (req = request, res = response) => {
 	if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
@@ -8,6 +8,15 @@ const uploadFile = async (req = request, res = response) => {
 	}
 
 	const {file} = req.files;
+	const cutName = file.name.split(".");
+	const extension = cutName[cutName.length - 1];
+
+	// Validating extension
+	const validExtensions = ["png", "jpg", "jpeg", "gif"];
+
+	if (!validExtensions.includes(extension)) {
+		res.status(400).json({msg: `Invalid file extension. ${extension}. (${validExtensions})`});
+	}
 
 	const uploadPath = path.join(__dirname, "../uploads/", file.name);
 
